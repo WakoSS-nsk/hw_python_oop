@@ -12,12 +12,12 @@ class InfoMessage:
     calories: float
 
     def get_message(self) -> str:
-        message = (f'Тип тренировки: {self.training_type};'
+        MESSAGE = (f'Тип тренировки: {self.training_type};'
                    f' Длительность: {self.duration:.3f} ч.;'
                    f' Дистанция: {self.distance:.3f} км;'
                    f' Ср. скорость: {self.speed:.3f} км/ч;'
                    f' Потрачено ккал: {self.calories:.3f}.')
-        return message.format(**asdict(self))
+        return MESSAGE.format(**asdict(self))
 
 
 class Training:
@@ -42,12 +42,12 @@ class Training:
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        return (self.get_distance() / self.duration)
+        return self.get_distance() / self.duration
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        raise NotImplementedError('Set get_spent_calories '
-                                  'in %s.' % (self.__class__.__name__))
+        raise NotImplementedError(f"Set get_spent_calories "
+                                  f"in %s." % (self.__class__.__name__))
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -87,10 +87,11 @@ class SportsWalking(Training):
 
     COEFF_CALORIE_3: float = 0.035
     COEFF_CALORIE_4: float = 0.029
+    SQUARE_ROOT = 2
 
     def get_spent_calories(self) -> float:
         return ((self.COEFF_CALORIE_3 * self.weight
-                + (self.get_mean_speed() ** 2
+                + (self.get_mean_speed() ** self.SQUARE_ROOT
                    // self.height)
                 * self.COEFF_CALORIE_4
                 * self.weight)
@@ -128,8 +129,10 @@ def read_package(workout_type: str, data: list) -> Training:
     training: dict[str, Training] = {'SWM': Swimming,
                                      'RUN': Running,
                                      'WLK': SportsWalking}
+    ERROR_MESSAGE = ", ".join(training)
     if workout_type not in training:
-        raise ValueError
+        raise ValueError(f"Неверный тип тренировки {workout_type}."
+                         f"Выберите из списка: ", ERROR_MESSAGE)
     return training[workout_type](*data)
 
 
