@@ -46,7 +46,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        raise NotImplementedError(f"Set get_spent_calories "
+        raise NotImplementedError("Set get_spent_calories "
                                   f"in %s." % (self.__class__.__name__))
 
     def show_training_info(self) -> InfoMessage:
